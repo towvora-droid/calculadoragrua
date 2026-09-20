@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Calculadora de Grúa</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #14161a;
+    color: #f2f2f0;
+    padding-bottom: 40px;
+  }
+  header {
+    background: #1d2024;
+    padding: 20px 20px 16px;
+    text-align: center;
+    border-bottom: 1px solid #2a2d33;
+  }
+  header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  header p {
+    font-size: 12px;
+    color: #9a9da3;
+    margin: 4px 0 0;
+  }
+  .container { padding: 16px; max-width: 480px; margin: 0 auto; }
+  .card {
+    background: #1d2024;
+    border: 1px solid #2a2d33;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .result-card {
+    background: linear-gradient(135deg, #d85a30, #b8461f);
+    border: none;
+    text-align: center;
+    padding: 20px 16px;
+  }
+  .result-card p.label {
+    font-size: 13px;
+    opacity: 0.85;
+    margin: 0 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .result-card p.total {
+    font-size: 36px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .result-card p.sub {
+    font-size: 13px;
+    opacity: 0.85;
+    margin: 8px 0 0;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    color: #b8bac0;
+    margin-bottom: 6px;
+  }
+  input[type="number"] {
+    width: 100%;
+    background: #14161a;
+    border: 1px solid #34373d;
+    border-radius: 8px;
+    color: #f2f2f0;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+  input[type="range"] {
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: #34373d;
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #d85a30;
+    cursor: pointer;
+    border: 3px solid #1d2024;
+  }
+  .row { display: flex; align-items: center; gap: 10px; }
+  .row span.out {
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 60px;
+    text-align: right;
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  .checkrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2d33;
+    font-size: 14px;
+  }
+  .checkrow:last-child { border-bottom: none; }
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #d85a30;
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #b8bac0;
+    padding: 5px 0;
+  }
+  .breakdown-row.final {
+    color: #f2f2f0;
+    font-weight: 600;
+    border-top: 1px solid #2a2d33;
+    margin-top: 4px;
+    padding-top: 8px;
+  }
+  h2.section {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #9a9da3;
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  .footer-note {
+    font-size: 11px;
+    color: #6f7278;
+    text-align: center;
+    padding: 20px 16px 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Calculadora de grúa</h1>
+  <p>Cotiza tus servicios de grúa de plataforma</p>
+</header>
+
+<div class="container">
+
+  <div class="card result-card">
+    <p class="label">Precio a cobrar</p>
+    <p class="total" id="total-out">$0</p>
+    <p class="sub" id="cost-out">Costo base: $0</p>
+  </div>
+
+  <div class="card">
+    <h2 class="section">Distancia y tarifas</h2>
+
+    <div class="field">
+      <label>Distancia del servicio</label>
+      <div class="row">
+        <input type="range" min="1" max="150" step="1" value="15" id="distancia">
+        <span class="out" id="distancia-out">15 km</span>
+      </div>
+    </div>
+
+    <div class="field grid2">
+      <div>
+        <label>Bandera / salida ($)</label>
+        <input type="number" id="banderazo" value="300" min="0" inputmode="numeric">
+      </div>
+      <div>
+        <label>Costo por km ($)</label>
+        <input type="number" id="tarifaKm" value="18" min="0" inputmode="numeric">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="section">Tiempo de espera</h2>
+    <div class="field">
+      <label>Minutos de espera / maniobra</label>
+      <div class="row">
+        <input type="range" min="0" max="120" step="5" value="0" id="espera">
+        <span class="out" id="espera-out">0 min</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Costo por hora de espera ($)</label>
+      <input type="number" id="tarifaEspera" value="150" min="0" inputmode="numeric">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="section">Extras</h2>
+    <div class="checkrow">
+      <input type="checkbox" id="nocheFinde">
+      <span>Servicio nocturno o fin de semana (+30%)</span>
+    </div>
+    <div class="checkrow">
+      <input type="checkbox" id="maniobra">
+      <span>Maniobra especial (volcadura, zanja, etc.) (+$250)</span>
+    </div>
+    <div class="checkrow">
+      <input type="checkbox" id="vehGrande">
+      <span>Vehículo grande o pesado (+$150)</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="section">Margen de ganancia</h2>
+    <div class="field">
+      <label>Ganancia deseada sobre el costo</label>
+      <div class="row">
+        <input type="range" min="0" max="60" step="5" value="20" id="margen">
+        <span class="out" id="margen-out">20%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="section">Desglose</h2>
+    <div class="breakdown-row"><span>Bandera + km</span><span id="b1">$0</span></div>
+    <div class="breakdown-row"><span>Espera</span><span id="b2">$0</span></div>
+    <div class="breakdown-row"><span>Extras</span><span id="b3">$0</span></div>
+    <div class="breakdown-row"><span>Recargo noche/finde</span><span id="b4">$0</span></div>
+    <div class="breakdown-row"><span>Ganancia</span><span id="b5">$0</span></div>
+    <div class="breakdown-row final"><span>Total a cobrar</span><span id="b6">$0</span></div>
+  </div>
+
+  <p class="footer-note">Funciona sin internet. Ajusta los valores base según tus costos reales de gasolina, mantenimiento y zona.</p>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = n => '$' + Math.round(n).toLocaleString('es-MX');
+
+function calcular() {
+  const distancia = Number($('distancia').value);
+  const banderazo = Number($('banderazo').value) || 0;
+  const tarifaKm = Number($('tarifaKm').value) || 0;
+  const espera = Number($('espera').value);
+  const tarifaEspera = Number($('tarifaEspera').value) || 0;
+  const noche = $('nocheFinde').checked;
+  const maniobra = $('maniobra').checked;
+  const vehGrande = $('vehGrande').checked;
+  const margen = Number($('margen').value);
+
+  $('distancia-out').textContent = distancia + ' km';
+  $('espera-out').textContent = espera + ' min';
+  $('margen-out').textContent = margen + '%';
+
+  const base = banderazo + distancia * tarifaKm;
+  const esperaCosto = (espera / 60) * tarifaEspera;
+  const extras = (maniobra ? 250 : 0) + (vehGrande ? 150 : 0);
+
+  let subtotal = base + esperaCosto + extras;
+  const recargo = noche ? subtotal * 0.3 : 0;
+  subtotal += recargo;
+
+  const ganancia = subtotal * (margen / 100);
+  const total = subtotal + ganancia;
+
+  $('b1').textContent = fmt(base);
+  $('b2').textContent = fmt(esperaCosto);
+  $('b3').textContent = fmt(extras);
+  $('b4').textContent = fmt(recargo);
+  $('b5').textContent = fmt(ganancia);
+  $('b6').textContent = fmt(total);
+
+  $('cost-out').textContent = 'Costo base: ' + fmt(subtotal);
+  $('total-out').textContent = fmt(total);
+}
+
+['distancia','banderazo','tarifaKm','espera','tarifaEspera','nocheFinde','maniobra','vehGrande','margen'].forEach(id => {
+  $(id).addEventListener('input', calcular);
+  $(id).addEventListener('change', calcular);
+});
+
+calcular();
+</script>
+
+</body>
+</html>
